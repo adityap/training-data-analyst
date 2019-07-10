@@ -28,8 +28,8 @@ function list(quiz = 'gcp') {
   const q = ds.createQuery([kind])
     .filter('quiz', '=', quiz);
   const p = ds.runQuery(q);
-  return p.then(([results, { moreResults, endCursor }]) => {
-    const questions = results.map(item => {
+  return p.then(([entities, info]) => {
+    const questions = entities.map(item => {
       item.id = item[Datastore.KEY].id;
       delete item.correctAnswer;
       return item;
@@ -37,7 +37,7 @@ function list(quiz = 'gcp') {
     return {
       questions,
       nextPageToken:
-      moreResults != 'NO_MORE_RESULTS' ? endCursor : false
+      info.moreResults != Datastore.NO_MORE_RESULTS ? info.endCursor : false
     };
 
   });
